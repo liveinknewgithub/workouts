@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Judo Competition Prep Training Schedule</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Judo Competition Prep</p>
+          <h1>Training Schedule</h1>
+          <p class="subtitle">
+            Filter workouts by phase, day, and section to stay locked in on the
+            exact session you need.
+          </p>
+          <div class="data-source" id="dataSource">Loading data source…</div>
+        </div>
+        <div class="summary-grid" id="summaryGrid">
+          <div class="summary-card">
+            <p class="summary-label">Phases</p>
+            <p class="summary-value" id="summaryPhases">-</p>
+          </div>
+          <div class="summary-card">
+            <p class="summary-label">Weeks</p>
+            <p class="summary-value" id="summaryWeeks">-</p>
+          </div>
+          <div class="summary-card">
+            <p class="summary-label">Sessions</p>
+            <p class="summary-value" id="summarySessions">-</p>
+          </div>
+          <div class="summary-card">
+            <p class="summary-label">Exercises</p>
+            <p class="summary-value" id="summaryExercises">-</p>
+          </div>
+        </div>
+      </header>
+
+      <section class="filters" id="filters">
+        <div class="filter-group">
+          <label for="sectionFilter">Section</label>
+          <select id="sectionFilter"></select>
+        </div>
+        <div class="filter-group">
+          <label for="dateFilter">Date</label>
+          <input id="dateFilter" type="date" list="dateOptions" />
+          <datalist id="dateOptions"></datalist>
+        </div>
+        <div class="filter-summary" id="filterSummary">Loading schedule…</div>
+      </section>
+
+      <main>
+        <section class="schedule" id="schedule"></section>
+      </main>
+    </div>
+
+    <script src="vendor/sqljs/sql-wasm.js"></script>
+    <script src="app.js" defer></script>
+  </body>
+</html>

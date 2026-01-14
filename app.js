@@ -352,6 +352,14 @@ const loadFromSqlite = async () => {
   return rows;
 };
 
+const getTodayISO = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 const init = async () => {
   filterSummary.textContent = "Loading schedule…";
   try {
@@ -363,6 +371,15 @@ const init = async () => {
 
   summarizeData(state.rows);
   hydrateFilters(state.rows);
+
+  // Auto-select today's date if it exists in the data
+  const todayISO = getTodayISO();
+  const availableDates = getDistinct(state.rows, "date");
+  if (availableDates.includes(todayISO)) {
+    dateFilter.value = todayISO;
+    state.filters.date = todayISO;
+  }
+
   renderSchedule();
 
   sectionFilter.addEventListener("change", applyFilters);

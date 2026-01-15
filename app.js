@@ -622,6 +622,23 @@ const init = async () => {
       applyFilters();
     }
   });
+
+  // Jump to Today link
+  const jumpToToday = document.getElementById("jumpToToday");
+  jumpToToday.addEventListener("click", (e) => {
+    e.preventDefault();
+    const today = getTodayISO();
+    const dates = getDistinct(state.rows, "date");
+    if (dates.includes(today)) {
+      dateFilter.value = today;
+      state.filters.date = today;
+      renderSchedule();
+    } else {
+      dateFilter.value = "";
+      state.filters.date = "";
+      showRestDay();
+    }
+  });
 };
 
 init();

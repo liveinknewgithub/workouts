@@ -209,6 +209,21 @@ h1 {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.jump-today {
+  color: var(--neon-cyan);
+  text-decoration: none;
+  font-size: 0.65rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.jump-today:hover {
+  text-decoration: underline;
 }
 
 select,

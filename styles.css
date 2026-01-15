@@ -682,6 +682,40 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   margin-bottom: 12px;
 }
 
+/* Rest day card */
+.rest-day-card {
+  background: linear-gradient(135deg, rgba(0, 245, 255, 0.05), rgba(191, 95, 255, 0.05));
+  border-radius: var(--radius-lg);
+  padding: 48px 24px;
+  text-align: center;
+  border: 1px solid var(--border);
+  margin-top: 20px;
+}
+
+.rest-day-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+}
+
+.rest-day-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.rest-day-message {
+  font-size: 1rem;
+  color: var(--neon-cyan);
+  margin-bottom: 16px;
+  text-shadow: 0 0 10px var(--accent-glow);
+}
+
+.rest-day-hint {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 /* Desktop enhancements */
 @media (min-width: 480px) {
   .app {

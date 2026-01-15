@@ -348,6 +348,22 @@ const createExerciseInputs = (exerciseKey, exerciseCard) => {
   return { toggleBtn, inputsContainer };
 };
 
+const showRestDay = () => {
+  filterSummary.textContent = "Rest day";
+  scheduleEl.innerHTML = "";
+
+  const restCard = document.createElement("div");
+  restCard.className = "rest-day-card";
+  restCard.innerHTML = `
+    <div class="rest-day-icon">🧘</div>
+    <h2 class="rest-day-title">No Training Today</h2>
+    <p class="rest-day-message">Enjoy your rest day! Recovery is just as important as training.</p>
+    <p class="rest-day-hint">Use the date filter to browse other sessions.</p>
+  `;
+
+  scheduleEl.appendChild(restCard);
+};
+
 const renderSchedule = () => {
   const filtered = filterRows(state.rows, state.filters);
   filterSummary.textContent = `Showing ${filtered.length} exercises`;
@@ -584,16 +600,20 @@ const init = async () => {
   hydrateFilters(state.rows);
   updateProgress();
 
-  // Auto-select today's date or nearest available date
+  // Check if today has a training session
   const todayISO = getTodayISO();
   const availableDates = getDistinct(state.rows, "date");
-  const selectedDate = findNearestDate(availableDates, todayISO);
-  if (selectedDate) {
-    dateFilter.value = selectedDate;
-    state.filters.date = selectedDate;
-  }
+  const todayHasSession = availableDates.includes(todayISO);
 
-  renderSchedule();
+  if (todayHasSession) {
+    // Today has a session - select it
+    dateFilter.value = todayISO;
+    state.filters.date = todayISO;
+    renderSchedule();
+  } else {
+    // Rest day - show rest message
+    showRestDay();
+  }
 
   sectionFilter.addEventListener("change", applyFilters);
   dateFilter.addEventListener("change", applyFilters);

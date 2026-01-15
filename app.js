@@ -641,13 +641,12 @@ const init = async () => {
   jumpToToday.addEventListener("click", (e) => {
     e.preventDefault();
     const today = getTodayISO();
+    dateFilter.value = today;
     const dates = getDistinct(state.rows, "date");
     if (dates.includes(today)) {
-      dateFilter.value = today;
       state.filters.date = today;
       renderSchedule();
     } else {
-      dateFilter.value = "";
       state.filters.date = "";
       showRestDay();
     }

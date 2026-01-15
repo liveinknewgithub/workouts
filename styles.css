@@ -142,49 +142,42 @@ h1 {
   margin-top: 4px;
 }
 
-/* Summary cards */
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+/* Progress display */
+.progress-display {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  padding: 16px 0;
 }
 
-.summary-card {
-  background: var(--panel);
-  border-radius: var(--radius-md);
-  padding: 12px 8px;
-  text-align: center;
-  border: 1px solid var(--border);
-  position: relative;
-  overflow: hidden;
-}
-
-.summary-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
-  opacity: 0.6;
-}
-
-.summary-label {
-  color: var(--muted);
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.summary-value {
-  font-size: 1.5rem;
+.progress-completed {
+  font-size: 2.5rem;
   font-weight: 700;
-  margin-top: 2px;
   background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  text-shadow: 0 0 30px var(--accent-glow);
+}
+
+.progress-separator {
+  font-size: 1.5rem;
+  color: var(--muted);
+  font-weight: 300;
+}
+
+.progress-total {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.progress-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-left: 8px;
+  text-transform: lowercase;
 }
 
 /* Filters - Mobile optimized */

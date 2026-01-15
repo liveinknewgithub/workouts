@@ -25,10 +25,8 @@ const scheduleEl = document.getElementById("schedule");
 const filterSummary = document.getElementById("filterSummary");
 const dataSource = document.getElementById("dataSource");
 
-const summaryPhases = document.getElementById("summaryPhases");
-const summaryWeeks = document.getElementById("summaryWeeks");
-const summarySessions = document.getElementById("summarySessions");
-const summaryExercises = document.getElementById("summaryExercises");
+const daysCompletedEl = document.getElementById("daysCompleted");
+const daysTotalEl = document.getElementById("daysTotal");
 
 const sectionOrder = ["Warm-up", "Main", "Cool-down", "Mobility", "Rest", "Pre-comp"];
 const dayOrder = [
@@ -163,11 +161,25 @@ const sortDays = (values) =>
     return indexA - indexB;
   });
 
-const summarizeData = (rows) => {
-  summaryPhases.textContent = getDistinct(rows, "phase").length;
-  summaryWeeks.textContent = getDistinct(rows, "week").length;
-  summarySessions.textContent = getDistinct(rows, "date").length;
-  summaryExercises.textContent = rows.length;
+const isExerciseComplete = (exercise) => {
+  const key = getExerciseKey(exercise);
+  const data = getUserData(key);
+  return completedExercises.has(key) || data.completed;
+};
+
+const isDayComplete = (rows, date) => {
+  const dayExercises = rows.filter(r => r.date === date);
+  if (dayExercises.length === 0) return false;
+  return dayExercises.every(exercise => isExerciseComplete(exercise));
+};
+
+const updateProgress = () => {
+  const dates = getDistinct(state.rows, "date");
+  const totalDays = dates.length;
+  const completedDays = dates.filter(date => isDayComplete(state.rows, date)).length;
+
+  daysCompletedEl.textContent = completedDays;
+  daysTotalEl.textContent = totalDays;
 };
 
 const applyFilters = () => {
@@ -462,6 +474,7 @@ const renderSchedule = () => {
             completedExercises.add(exerciseKey);
           }
           saveCompletion();
+          updateProgress();
         });
 
         exerciseCard.appendChild(button);
@@ -568,8 +581,8 @@ const init = async () => {
     state.rows = await loadFromJson();
   }
 
-  summarizeData(state.rows);
   hydrateFilters(state.rows);
+  updateProgress();
 
   // Auto-select today's date or nearest available date
   const todayISO = getTodayISO();

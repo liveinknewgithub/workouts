@@ -544,6 +544,21 @@ const getTodayISO = () => {
   return `${year}-${month}-${day}`;
 };
 
+const findNearestDate = (dates, targetDate) => {
+  if (!dates.length) return null;
+  const sorted = [...dates].sort();
+
+  // If target date exists, return it
+  if (sorted.includes(targetDate)) return targetDate;
+
+  // Find the next upcoming date
+  const futureDate = sorted.find(d => d > targetDate);
+  if (futureDate) return futureDate;
+
+  // No future dates, return most recent past date
+  return sorted[sorted.length - 1];
+};
+
 const init = async () => {
   filterSummary.textContent = "Loading schedule…";
   try {
@@ -556,12 +571,13 @@ const init = async () => {
   summarizeData(state.rows);
   hydrateFilters(state.rows);
 
-  // Auto-select today's date if it exists in the data
+  // Auto-select today's date or nearest available date
   const todayISO = getTodayISO();
   const availableDates = getDistinct(state.rows, "date");
-  if (availableDates.includes(todayISO)) {
-    dateFilter.value = todayISO;
-    state.filters.date = todayISO;
+  const selectedDate = findNearestDate(availableDates, todayISO);
+  if (selectedDate) {
+    dateFilter.value = selectedDate;
+    state.filters.date = selectedDate;
   }
 
   renderSchedule();

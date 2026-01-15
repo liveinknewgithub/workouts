@@ -7,8 +7,16 @@ const state = {
   source: "",
 };
 
+// Legacy completion key (for migration)
 const COMPLETION_KEY = "workouts-exercises-completed";
 const completedExercises = new Set(JSON.parse(localStorage.getItem(COMPLETION_KEY) || "[]"));
+
+// New user data storage
+const USER_DATA_KEY = "workouts-user-data";
+const WEIGHT_UNIT_KEY = "workouts-weight-unit";
+
+let userData = JSON.parse(localStorage.getItem(USER_DATA_KEY) || "{}");
+let weightUnit = localStorage.getItem(WEIGHT_UNIT_KEY) || "kg";
 
 const sectionFilter = document.getElementById("sectionFilter");
 const dateFilter = document.getElementById("dateFilter");
@@ -80,14 +88,42 @@ const formatDate = (iso) => {
   });
 };
 
+// Legacy save for backwards compatibility
 const saveCompletion = () => {
   localStorage.setItem(COMPLETION_KEY, JSON.stringify(Array.from(completedExercises)));
+};
+
+// New user data save/load
+const saveUserData = () => {
+  localStorage.setItem(USER_DATA_KEY, JSON.stringify(userData));
+};
+
+const saveWeightUnit = () => {
+  localStorage.setItem(WEIGHT_UNIT_KEY, weightUnit);
 };
 
 const getExerciseKey = (exercise) =>
   [exercise.date, exercise.section, exercise.exercise, exercise.sets, exercise.reps, exercise.rest]
     .filter(Boolean)
     .join("::");
+
+const getUserData = (key) => {
+  return userData[key] || { completed: false, weight: "", rpe: "", notes: "" };
+};
+
+const setUserData = (key, field, value) => {
+  if (!userData[key]) {
+    userData[key] = { completed: false, weight: "", rpe: "", notes: "" };
+  }
+  userData[key][field] = value;
+  saveUserData();
+};
+
+const hasUserInputs = (key) => {
+  const data = userData[key];
+  if (!data) return false;
+  return data.weight || data.rpe || data.notes;
+};
 
 const buildOptionList = (select, values) => {
   select.innerHTML = "";
@@ -170,6 +206,136 @@ const groupRowsByDate = (rows) => {
   return Array.from(grouped.values()).sort((a, b) => a.date.localeCompare(b.date));
 };
 
+const createExerciseInputs = (exerciseKey, exerciseCard) => {
+  const data = getUserData(exerciseKey);
+  const shouldExpand = hasUserInputs(exerciseKey);
+
+  // Toggle button
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "exercise-log-toggle";
+  toggleBtn.innerHTML = shouldExpand
+    ? '<span class="toggle-icon">−</span> Hide Log'
+    : '<span class="toggle-icon">+</span> Log Weight & Notes';
+
+  // Inputs container
+  const inputsContainer = document.createElement("div");
+  inputsContainer.className = "exercise-inputs" + (shouldExpand ? " expanded" : "");
+
+  // Weight row
+  const weightRow = document.createElement("div");
+  weightRow.className = "exercise-input-row";
+
+  const weightLabel = document.createElement("label");
+  weightLabel.textContent = "Weight";
+  weightLabel.className = "input-label";
+
+  const weightInput = document.createElement("input");
+  weightInput.type = "number";
+  weightInput.step = "0.5";
+  weightInput.min = "0";
+  weightInput.placeholder = "0";
+  weightInput.className = "exercise-weight-input";
+  weightInput.value = data.weight || "";
+
+  const unitSelect = document.createElement("select");
+  unitSelect.className = "exercise-unit-select";
+  unitSelect.innerHTML = `
+    <option value="kg" ${weightUnit === "kg" ? "selected" : ""}>kg</option>
+    <option value="lbs" ${weightUnit === "lbs" ? "selected" : ""}>lbs</option>
+  `;
+
+  const rpeLabel = document.createElement("label");
+  rpeLabel.textContent = "RPE";
+  rpeLabel.className = "input-label";
+
+  const rpeSelect = document.createElement("select");
+  rpeSelect.className = "exercise-rpe-select";
+  rpeSelect.innerHTML = `
+    <option value="">-</option>
+    <option value="5" ${data.rpe === "5" ? "selected" : ""}>5</option>
+    <option value="5.5" ${data.rpe === "5.5" ? "selected" : ""}>5.5</option>
+    <option value="6" ${data.rpe === "6" ? "selected" : ""}>6</option>
+    <option value="6.5" ${data.rpe === "6.5" ? "selected" : ""}>6.5</option>
+    <option value="7" ${data.rpe === "7" ? "selected" : ""}>7</option>
+    <option value="7.5" ${data.rpe === "7.5" ? "selected" : ""}>7.5</option>
+    <option value="8" ${data.rpe === "8" ? "selected" : ""}>8</option>
+    <option value="8.5" ${data.rpe === "8.5" ? "selected" : ""}>8.5</option>
+    <option value="9" ${data.rpe === "9" ? "selected" : ""}>9</option>
+    <option value="9.5" ${data.rpe === "9.5" ? "selected" : ""}>9.5</option>
+    <option value="10" ${data.rpe === "10" ? "selected" : ""}>10</option>
+  `;
+
+  const weightGroup = document.createElement("div");
+  weightGroup.className = "input-group weight-group";
+  weightGroup.appendChild(weightLabel);
+  const weightInputs = document.createElement("div");
+  weightInputs.className = "weight-inputs";
+  weightInputs.appendChild(weightInput);
+  weightInputs.appendChild(unitSelect);
+  weightGroup.appendChild(weightInputs);
+
+  const rpeGroup = document.createElement("div");
+  rpeGroup.className = "input-group rpe-group";
+  rpeGroup.appendChild(rpeLabel);
+  rpeGroup.appendChild(rpeSelect);
+
+  weightRow.appendChild(weightGroup);
+  weightRow.appendChild(rpeGroup);
+
+  // Notes row
+  const notesRow = document.createElement("div");
+  notesRow.className = "exercise-notes-row";
+
+  const notesLabel = document.createElement("label");
+  notesLabel.textContent = "Notes";
+  notesLabel.className = "input-label";
+
+  const notesInput = document.createElement("textarea");
+  notesInput.className = "exercise-user-notes";
+  notesInput.placeholder = "How did it feel? Form cues, adjustments...";
+  notesInput.rows = 2;
+  notesInput.value = data.notes || "";
+
+  notesRow.appendChild(notesLabel);
+  notesRow.appendChild(notesInput);
+
+  inputsContainer.appendChild(weightRow);
+  inputsContainer.appendChild(notesRow);
+
+  // Event handlers
+  toggleBtn.addEventListener("click", () => {
+    const isExpanded = inputsContainer.classList.contains("expanded");
+    inputsContainer.classList.toggle("expanded");
+    toggleBtn.innerHTML = isExpanded
+      ? '<span class="toggle-icon">+</span> Log Weight & Notes'
+      : '<span class="toggle-icon">−</span> Hide Log';
+  });
+
+  weightInput.addEventListener("input", () => {
+    setUserData(exerciseKey, "weight", weightInput.value);
+  });
+
+  unitSelect.addEventListener("change", () => {
+    weightUnit = unitSelect.value;
+    saveWeightUnit();
+    // Update all unit selects on the page
+    document.querySelectorAll(".exercise-unit-select").forEach((sel) => {
+      sel.value = weightUnit;
+    });
+  });
+
+  rpeSelect.addEventListener("change", () => {
+    setUserData(exerciseKey, "rpe", rpeSelect.value);
+  });
+
+  notesInput.addEventListener("input", () => {
+    setUserData(exerciseKey, "notes", notesInput.value);
+  });
+
+  return { toggleBtn, inputsContainer };
+};
+
 const renderSchedule = () => {
   const filtered = filterRows(state.rows, state.filters);
   filterSummary.textContent = `Showing ${filtered.length} exercises`;
@@ -231,9 +397,18 @@ const renderSchedule = () => {
         exerciseCard.className = "exercise-card";
 
         const exerciseKey = getExerciseKey(exercise);
-        const isComplete = completedExercises.has(exerciseKey);
+
+        // Check both legacy and new storage for completion
+        const legacyComplete = completedExercises.has(exerciseKey);
+        const newData = getUserData(exerciseKey);
+        const isComplete = legacyComplete || newData.completed;
+
         if (isComplete) {
           exerciseCard.classList.add("exercise-complete");
+          // Migrate legacy to new storage
+          if (legacyComplete && !newData.completed) {
+            setUserData(exerciseKey, "completed", true);
+          }
         }
 
         const header = document.createElement("div");
@@ -251,28 +426,11 @@ const renderSchedule = () => {
           <span>Rest: ${exercise.rest || "-"}</span>
         `;
 
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "exercise-complete-button";
-        button.textContent = isComplete ? "Completed" : "Mark Complete";
-        button.addEventListener("click", () => {
-          if (completedExercises.has(exerciseKey)) {
-            completedExercises.delete(exerciseKey);
-            exerciseCard.classList.remove("exercise-complete");
-            button.textContent = "Mark Complete";
-          } else {
-            completedExercises.add(exerciseKey);
-            exerciseCard.classList.add("exercise-complete");
-            button.textContent = "Completed";
-          }
-          saveCompletion();
-        });
-
         header.appendChild(name);
         header.appendChild(meta);
         exerciseCard.appendChild(header);
-        exerciseCard.appendChild(button);
 
+        // Add static notes from database if present
         if (exercise.notes) {
           const notes = document.createElement("div");
           notes.className = "exercise-notes";
@@ -280,7 +438,33 @@ const renderSchedule = () => {
           exerciseCard.appendChild(notes);
         }
 
+        // Add collapsible user inputs
+        const { toggleBtn, inputsContainer } = createExerciseInputs(exerciseKey, exerciseCard);
+        exerciseCard.appendChild(toggleBtn);
+        exerciseCard.appendChild(inputsContainer);
 
+        // Complete button
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "exercise-complete-button";
+        button.textContent = isComplete ? "Completed" : "Mark Complete";
+        button.addEventListener("click", () => {
+          const currentlyComplete = exerciseCard.classList.contains("exercise-complete");
+          if (currentlyComplete) {
+            exerciseCard.classList.remove("exercise-complete");
+            button.textContent = "Mark Complete";
+            setUserData(exerciseKey, "completed", false);
+            completedExercises.delete(exerciseKey);
+          } else {
+            exerciseCard.classList.add("exercise-complete");
+            button.textContent = "Completed";
+            setUserData(exerciseKey, "completed", true);
+            completedExercises.add(exerciseKey);
+          }
+          saveCompletion();
+        });
+
+        exerciseCard.appendChild(button);
         block.appendChild(exerciseCard);
       });
 

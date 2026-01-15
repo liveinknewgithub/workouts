@@ -425,6 +425,191 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   line-height: 1.5;
 }
 
+/* Log toggle button */
+.exercise-log-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: rgba(191, 95, 255, 0.08);
+  border: 1px dashed var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--neon-purple);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.exercise-log-toggle:hover {
+  background: rgba(191, 95, 255, 0.15);
+  border-color: var(--neon-purple);
+}
+
+.exercise-log-toggle .toggle-icon {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--neon-cyan);
+}
+
+/* Collapsible inputs container */
+.exercise-inputs {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.2s ease, margin 0.3s ease;
+  margin-top: 0;
+}
+
+.exercise-inputs.expanded {
+  max-height: 300px;
+  opacity: 1;
+  margin-top: 12px;
+}
+
+/* Input row layout */
+.exercise-input-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.weight-group {
+  flex: 1;
+}
+
+.rpe-group {
+  flex-shrink: 0;
+  min-width: 80px;
+}
+
+.input-label {
+  font-size: 0.7rem;
+  color: var(--neon-purple);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
+/* Weight inputs container */
+.weight-inputs {
+  display: flex;
+  gap: 6px;
+}
+
+/* Weight input */
+.exercise-weight-input {
+  flex: 1;
+  min-width: 60px;
+  padding: 10px 12px;
+  background: var(--panel-light);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.exercise-weight-input:focus {
+  outline: none;
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 0 2px var(--accent-glow), 0 0 15px var(--accent-glow);
+}
+
+.exercise-weight-input::placeholder {
+  color: var(--muted);
+}
+
+/* Unit select */
+.exercise-unit-select {
+  width: 65px;
+  padding: 10px 8px;
+  padding-right: 24px;
+  background: var(--panel-light);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--neon-cyan);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2300f5ff' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  transition: all 0.2s ease;
+}
+
+.exercise-unit-select:focus {
+  outline: none;
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* RPE select */
+.exercise-rpe-select {
+  width: 100%;
+  padding: 10px 12px;
+  padding-right: 28px;
+  background: var(--panel-light);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23bf5fff' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  transition: all 0.2s ease;
+}
+
+.exercise-rpe-select:focus {
+  outline: none;
+  border-color: var(--neon-purple);
+  box-shadow: 0 0 0 2px var(--accent2-glow);
+}
+
+/* Notes row */
+.exercise-notes-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* User notes textarea */
+.exercise-user-notes {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--panel-light);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.85rem;
+  font-family: inherit;
+  line-height: 1.4;
+  resize: vertical;
+  min-height: 60px;
+  transition: all 0.2s ease;
+}
+
+.exercise-user-notes:focus {
+  outline: none;
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 0 2px var(--accent-glow), 0 0 15px var(--accent-glow);
+}
+
+.exercise-user-notes::placeholder {
+  color: var(--muted);
+}
+
 /* Complete button - Big and tappable with neon glow */
 .exercise-complete-button {
   width: 100%;

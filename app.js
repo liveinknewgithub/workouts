@@ -383,6 +383,11 @@ const renderSchedule = () => {
     const card = document.createElement("article");
     card.className = "day-card";
 
+    // Check if all exercises for this day are complete
+    if (isDayComplete(state.rows, session.date)) {
+      card.classList.add("day-complete");
+    }
+
     const header = document.createElement("div");
     header.className = "day-header";
 
@@ -491,6 +496,13 @@ const renderSchedule = () => {
           }
           saveCompletion();
           updateProgress();
+
+          // Update day card completion status
+          if (isDayComplete(state.rows, exercise.date)) {
+            card.classList.add("day-complete");
+          } else {
+            card.classList.remove("day-complete");
+          }
         });
 
         exerciseCard.appendChild(button);
@@ -600,14 +612,15 @@ const init = async () => {
   hydrateFilters(state.rows);
   updateProgress();
 
-  // Check if today has a training session
+  // Always show today's date in the filter
   const todayISO = getTodayISO();
+  dateFilter.value = todayISO;
+
   const availableDates = getDistinct(state.rows, "date");
   const todayHasSession = availableDates.includes(todayISO);
 
   if (todayHasSession) {
-    // Today has a session - select it
-    dateFilter.value = todayISO;
+    // Today has a session - show it
     state.filters.date = todayISO;
     renderSchedule();
   } else {

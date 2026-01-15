@@ -296,6 +296,27 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-magenta));
 }
 
+/* Completed day styling */
+.day-complete {
+  border-color: rgba(0, 255, 136, 0.4);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.15), var(--shadow-md);
+}
+
+.day-complete::before {
+  background: linear-gradient(90deg, var(--success), var(--success));
+}
+
+.day-complete .day-header {
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), transparent);
+}
+
+.day-complete .day-header h2::after {
+  content: " ✓";
+  color: var(--success);
+  font-size: 0.8em;
+  text-shadow: 0 0 10px var(--success-glow);
+}
+
 .day-header {
   padding: 16px 16px 12px;
   display: flex;

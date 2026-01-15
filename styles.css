@@ -464,7 +464,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .exercise-inputs.expanded {
-  max-height: 300px;
+  max-height: 400px;
+  overflow: visible;
   opacity: 1;
   margin-top: 12px;
 }
@@ -472,7 +473,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* Input row layout */
 .exercise-input-row {
   display: flex;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-bottom: 10px;
 }
 
@@ -484,11 +486,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .weight-group {
   flex: 1;
+  min-width: 140px;
 }
 
 .rpe-group {
   flex-shrink: 0;
-  min-width: 80px;
+  width: 70px;
 }
 
 .input-label {
